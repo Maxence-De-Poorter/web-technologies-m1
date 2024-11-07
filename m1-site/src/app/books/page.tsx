@@ -6,7 +6,7 @@ export default function BooksPage() {
             <Breadcrumb links={[
                 { href: '/books', label: 'Liste des livres' }
             ]} />
-            <h1>Liste des livres</h1>;
+            <h1>Liste des livres</h1>
         </div>
     )
 }
