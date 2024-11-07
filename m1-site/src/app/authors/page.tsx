@@ -6,6 +6,7 @@ export default function AuthorsPage() {
         <div>
             <PageTitle>Liste des auteurs</PageTitle>
             <Breadcrumb links={[
+                { href: '/', label: 'Accueil' },
                 {href: '/authors', label: 'Liste des auteurs'}
             ]}/>
         </div>
