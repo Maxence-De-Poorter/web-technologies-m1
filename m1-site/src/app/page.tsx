@@ -1,8 +1,11 @@
 'use client';
 import './App.css';
+import PageTitle from "../components/PageTitle";
 
-function App() {
-  return <h1>Hello World!</h1>
+export default function HomePage(){
+    return(
+        <div>
+            <PageTitle>Acceuil</PageTitle>
+        </div>
+    );
 }
-
-export default App;
