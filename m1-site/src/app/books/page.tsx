@@ -35,7 +35,7 @@ export default function BooksPage() {
 
             const response = await fetch(`http://localhost:3001/books?${query.toString()}`);
             if (!response.ok) {
-                throw new Error("Erreur lors de la récupération des livres");
+                console.error("Erreur lors de la récupération des livres");
             }
             const data = await response.json();
             setBooks(data);
@@ -48,7 +48,7 @@ export default function BooksPage() {
         try {
             const response = await fetch("http://localhost:3001/authors");
             if (!response.ok) {
-                throw new Error("Erreur lors de la récupération des auteurs");
+                console.error("Erreur lors de la récupération des auteurs");
             }
             const data = await response.json();
             setAuthors(data);
@@ -65,11 +65,11 @@ export default function BooksPage() {
                 body: JSON.stringify(newBook),
             });
             if (!response.ok) {
-                throw new Error("Erreur lors de la création du livre");
+                console.error("Erreur lors de la création du livre");
             }
             setIsModalOpen(false);
             setNewBook({ title: "", year_published: "", author_id: "" });
-            fetchBooks(); // Rafraîchit la liste des livres
+            await fetchBooks(); // Rafraîchit la liste des livres
         } catch (error) {
             console.error("Erreur:", error);
         }
