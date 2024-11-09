@@ -95,7 +95,7 @@ export default function BooksPage() {
                             <div key={book.id} className="border p-4 rounded-lg shadow-md">
                                 <h2 className="text-lg font-semibold">{book.title}</h2>
                                 <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
-                                <p>Date de publication : {book.publishedDate}</p>
+                                <p>Date de publication : {book.year_published}</p>
                             </div>
                         ))}
                     </div>
