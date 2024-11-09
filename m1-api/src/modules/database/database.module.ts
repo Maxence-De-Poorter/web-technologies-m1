@@ -19,4 +19,3 @@ import { BookController } from '../books/book.controller';
   exports: [TypeOrmModule],
 })
 export class DatabaseModule {}
-
