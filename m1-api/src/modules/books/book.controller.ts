@@ -9,8 +9,9 @@ export class BookController {
   @Get()
   async getBooks(
     @Query('title') title: string,
-    @Query('author_id') authorId: string // Paramètre pour l'ID de l'auteur
+    @Query('author_id') authorId: string,
+    @Query('order') order: 'ASC' | 'DESC' = 'DESC' // Prend en compte le paramètre `order`
   ): Promise<Book[]> {
-    return this.bookService.findBooks(title, authorId);
+    return this.bookService.findBooks(title, authorId, order);
   }
 }

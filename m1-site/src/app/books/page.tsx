@@ -6,15 +6,17 @@ import PageTitle from "../../components/PageTitle";
 
 export default function BooksPage() {
     const [books, setBooks] = useState([]);
-    const [authors, setAuthors] = useState([]); // État pour stocker les auteurs
+    const [authors, setAuthors] = useState([]);
     const [searchTitle, setSearchTitle] = useState("");
-    const [selectedAuthor, setSelectedAuthor] = useState(""); // État pour stocker l'auteur sélectionné
+    const [selectedAuthor, setSelectedAuthor] = useState("");
+    const [sortOrder, setSortOrder] = useState("DESC");
 
-    const fetchBooks = async (title = "", authorId = "") => {
+    const fetchBooks = async (title = "", authorId = "", order = "DESC") => {
         try {
             const query = new URLSearchParams();
             if (title) query.append("title", title);
             if (authorId) query.append("author_id", authorId);
+            query.append("order", order);
 
             const response = await fetch(`http://localhost:3001/books?${query.toString()}`);
             if (!response.ok) {
@@ -42,11 +44,11 @@ export default function BooksPage() {
 
     useEffect(() => {
         fetchBooks();
-        fetchAuthors(); // Récupère les auteurs au chargement de la page
+        fetchAuthors();
     }, []);
 
     const handleApplyFilters = () => {
-        fetchBooks(searchTitle, selectedAuthor);
+        fetchBooks(searchTitle, selectedAuthor, sortOrder);
     };
 
     return (
@@ -57,7 +59,7 @@ export default function BooksPage() {
                 { href: "/books", label: "Liste des livres" },
             ]} />
             <div className="flex h-screen w-full">
-                <aside className="w-1/4 p-4 bg-gray-100 shadow-md h-full">
+                <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[500px] rounded-lg">
                     <h1 className="text-center font-semibold text-xl">Filtres</h1>
 
                     <input
@@ -71,7 +73,7 @@ export default function BooksPage() {
                     <select
                         value={selectedAuthor}
                         onChange={(e) => setSelectedAuthor(e.target.value)}
-                        className="w-full p-2 my-4 border border-gray-300 rounded"
+                        className="w-full p-2 my-4 border border-gray-300 rounded bg-white text-gray-700 shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">Tous les auteurs</option>
                         {authors.map((author) => (
@@ -79,6 +81,15 @@ export default function BooksPage() {
                                 {author.first_name} {author.last_name}
                             </option>
                         ))}
+                    </select>
+
+                    <select
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                        className="w-full p-2 my-4 border border-gray-300 rounded bg-white text-gray-700 shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="DESC">Du plus récent au plus ancien</option>
+                        <option value="ASC">Du plus ancien au plus récent</option>
                     </select>
 
                     <button
