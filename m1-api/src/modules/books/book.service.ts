@@ -10,13 +10,19 @@ export class BookService {
     private bookRepository: Repository<Book>,
   ) {}
 
-  async findAll(): Promise<Book[]> {
-    return this.bookRepository.find({ relations: ['author'] });
-  }
+  async findBooks(title?: string, authorId?: string): Promise<Book[]> {
+    const where = {};
 
-  async findByTitle(title: string): Promise<Book[]> {
+    if (title) {
+      where['title'] = Like(`%${title}%`);
+    }
+
+    if (authorId) {
+      where['author'] = { id: authorId };
+    }
+
     return this.bookRepository.find({
-      where: { title: Like(`%${title}%`) }, // Utilise LIKE pour une recherche partielle
+      where,
       relations: ['author'],
     });
   }

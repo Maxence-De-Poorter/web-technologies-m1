@@ -7,10 +7,10 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Get()
-  async getBooks(@Query('title') title: string): Promise<Book[]> {
-    if (title) {
-      return this.bookService.findByTitle(title);
-    }
-    return this.bookService.findAll();
+  async getBooks(
+    @Query('title') title: string,
+    @Query('author_id') authorId: string // Paramètre pour l'ID de l'auteur
+  ): Promise<Book[]> {
+    return this.bookService.findBooks(title, authorId);
   }
 }
