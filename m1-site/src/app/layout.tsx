@@ -19,7 +19,9 @@ export default function Layout({
           </head>
           <body>
           <Navbar/>
+          <div className="p-10">
               {children}
+          </div>
           </body>
       </html>
   )
