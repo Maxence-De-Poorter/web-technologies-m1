@@ -13,7 +13,7 @@ import { Author } from '../authors/author.entity';
       type: 'sqlite',
       database: 'db',
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
     }),
     TypeOrmModule.forFeature([Book, Author]),
   ],
