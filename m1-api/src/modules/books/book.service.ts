@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Book } from './book.entity';
 
 @Injectable()
@@ -10,19 +10,21 @@ export class BookService {
     private bookRepository: Repository<Book>,
   ) {}
 
-  // Récupère tous les livres avec les informations de l'auteur
-  async findAll(): Promise<Book[]> {
+  async findBooks(title?: string, authorId?: string, order: 'ASC' | 'DESC' = 'DESC'): Promise<Book[]> {
+    const where = {};
+    if (title) {
+      where['title'] = Like(`%${title}%`);
+    }
+    if (authorId) {
+      where['author'] = { id: authorId };
+    }
+
     return this.bookRepository.find({
-      relations: ['author'], // Inclut les données de l'auteur
-      select: {
-        id: true,
-        title: true,
-        year_published: true,
-        author: {
-          first_name: true,
-          last_name: true,
-        },
+      where,
+      order: {
+        year_published: order,
       },
+      relations: ['author'],
     });
   }
 }
