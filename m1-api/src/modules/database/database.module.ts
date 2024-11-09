@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Book } from '../books/book.entity';
 import { BookService } from '../books/book.service';
 import { BookController } from '../books/book.controller';
+import { AuthorController } from '../authors/author.controller';
+import { AuthorService } from '../authors/author.service';
+import { Author } from '../authors/author.entity';
 
 @Module({
   imports: [
@@ -12,10 +15,10 @@ import { BookController } from '../books/book.controller';
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Book]),
+    TypeOrmModule.forFeature([Book, Author]),
   ],
-  controllers: [BookController],
-  providers: [BookService],
+  controllers: [BookController, AuthorController],
+  providers: [BookService, AuthorService],
   exports: [TypeOrmModule],
 })
 export class DatabaseModule {}
