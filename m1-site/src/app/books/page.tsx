@@ -31,32 +31,41 @@ export default function BooksPage() {
     };
 
     return (
-        <div>
-            <PageTitle>Liste des livres</PageTitle>
+        <div><PageTitle>Liste des livres</PageTitle>
             <Breadcrumb links={[
                 { href: "/", label: "Accueil" },
                 { href: "/books", label: "Liste des livres" },
             ]} />
+            <div className="flex h-screen w-full">
+                <aside className="w-1/4 p-4 bg-gray-100 shadow-md h-full">
+                    <h1 className="text-center font-semibold text-xl">Filtres</h1>
+                    <input
+                        type="text"
+                        placeholder="Rechercher par titre"
+                        value={searchTitle}
+                        onChange={(e) => setSearchTitle(e.target.value)}
+                        className="w-full p-2 my-4 border border-gray-300 rounded"
+                    />
+                    <button
+                        onClick={handleApplyFilters}
+                        className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                        Appliquer les filtres
+                    </button>
+                </aside>
 
-            <div>
-                <input
-                    type="text"
-                    placeholder="Rechercher par titre"
-                    value={searchTitle}
-                    onChange={(e) => setSearchTitle(e.target.value)}
-                />
-                <button onClick={handleApplyFilters}>Appliquer les filtres</button>
+                <main className="w-3/4 p-6 overflow-y-auto bg-white">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {books.map((book) => (
+                            <div key={book.id} className="border p-4 rounded-lg shadow-md">
+                                <h2 className="text-lg font-semibold">{book.title}</h2>
+                                <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
+                                <p>Date de publication : {book.publishedDate}</p>
+                            </div>
+                        ))}
+                    </div>
+                </main>
             </div>
-
-            <ul>
-                {books.map((book) => (
-                    <li key={book.id}>
-                        <h2>{book.title}</h2>
-                        <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
-                        <p>Date de publication : {book.publishedDate}</p>
-                    </li>
-                ))}
-            </ul>
         </div>
     );
 }
