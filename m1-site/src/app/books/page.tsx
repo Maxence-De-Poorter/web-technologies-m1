@@ -4,9 +4,22 @@ import { useEffect, useState } from 'react';
 import Breadcrumb from "../../components/Breadcrumb";
 import PageTitle from "../../components/PageTitle";
 
+type Author = {
+    id: number;
+    first_name: string;
+    last_name: string;
+};
+
+type Book = {
+    id: number;
+    title: string;
+    year_published: number;
+    author?: Author;
+};
+
 export default function BooksPage() {
-    const [books, setBooks] = useState([]);
-    const [authors, setAuthors] = useState([]);
+    const [books, setBooks] = useState<Book[]>([]);
+    const [authors, setAuthors] = useState<Author[]>([]);
     const [searchTitle, setSearchTitle] = useState("");
     const [selectedAuthor, setSelectedAuthor] = useState("");
     const [sortOrder, setSortOrder] = useState("DESC");
@@ -78,8 +91,6 @@ export default function BooksPage() {
                 {href: "/", label: "Accueil"},
                 {href: "/books", label: "Liste des livres"},
             ]}/>
-
-
 
             {/* Modale de création de livre */}
             {isModalOpen && (
@@ -186,8 +197,7 @@ export default function BooksPage() {
                         {books.map((book) => (
                             <div key={book.id} className="border p-4 rounded-lg shadow-md">
                                 <h2 className="text-lg font-semibold">{book.title}</h2>
-                                <p>Auteur
-                                    : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
+                                <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
                                 <p>Date de publication : {book.year_published}</p>
                             </div>
                         ))}
