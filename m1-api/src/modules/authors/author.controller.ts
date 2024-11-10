@@ -10,8 +10,9 @@ export class AuthorController {
   async getAuthors(
     @Query('name') name: string,
     @Query('minBooks') minBooks: string,
+    @Query('order') order: 'ASC' | 'DESC' = 'ASC', // Ajoute le paramètre `order`
   ): Promise<any[]> {
-    return this.authorService.findAuthors(name, minBooks ? parseInt(minBooks, 10) : 0);
+    return this.authorService.findAuthors(name, minBooks ? parseInt(minBooks, 10) : 0, order);
   }
 
   @Get(':id')

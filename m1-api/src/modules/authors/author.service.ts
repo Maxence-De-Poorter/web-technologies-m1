@@ -10,7 +10,7 @@ export class AuthorService {
     private authorRepository: Repository<Author>,
   ) {}
 
-  async findAuthors(name: string = "", minBooks: number = 0): Promise<any[]> {
+  async findAuthors(name: string = "", minBooks: number = 0, order: 'ASC' | 'DESC' = 'ASC'): Promise<any[]> {
     const query = this.authorRepository
       .createQueryBuilder('author')
       .leftJoinAndSelect('author.books', 'book')
@@ -22,7 +22,7 @@ export class AuthorService {
       ])
       .addSelect('COUNT(book.id)', 'bookCount')
       .groupBy('author.id')
-      .orderBy('author.last_name', 'ASC');
+      .orderBy('author.last_name', order); // Utilise le paramètre `order` pour le tri
 
     if (name) {
       query.andWhere("author.first_name LIKE :name OR author.last_name LIKE :name", { name: `%${name}%` });

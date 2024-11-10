@@ -17,14 +17,16 @@ export default function AuthorsPage() {
     const [authors, setAuthors] = useState<Author[]>([]);
     const [searchName, setSearchName] = useState("");
     const [minBookCount, setMinBookCount] = useState<number | "">("");
+    const [sortOrder, setSortOrder] = useState("ASC"); // Nouvel état pour l'ordre de tri
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newAuthor, setNewAuthor] = useState({ first_name: "", last_name: "", photo: "" });
 
-    const fetchAuthors = async (name = "", minBooks = "") => {
+    const fetchAuthors = async (name = "", minBooks = "", order = "ASC") => {
         try {
             const query = new URLSearchParams();
             if (name) query.append("name", name);
             if (minBooks) query.append("minBooks", minBooks.toString());
+            query.append("order", order); // Ajouter le paramètre d'ordre
 
             const response = await fetch(`http://localhost:3001/authors?${query.toString()}`);
             if (!response.ok) {
@@ -61,7 +63,7 @@ export default function AuthorsPage() {
     }, []);
 
     const handleApplyFilters = () => {
-        fetchAuthors(searchName, minBookCount);
+        fetchAuthors(searchName, minBookCount, sortOrder);
     };
 
     return (
@@ -136,6 +138,15 @@ export default function AuthorsPage() {
                         className="w-full p-2 my-4 border border-gray-300 rounded"
                     />
 
+                    <select
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                        className="w-full p-2 mb-4 border border-gray-300 rounded bg-white"
+                    >
+                        <option value="ASC">Ordre Alphabétique</option>
+                        <option value="DESC">Ordre Inverse</option>
+                    </select>
+
                     <button
                         onClick={handleApplyFilters}
                         className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
@@ -143,7 +154,6 @@ export default function AuthorsPage() {
                         Appliquer les filtres
                     </button>
 
-                    {/* Bouton pour ajouter un nouvel auteur */}
                     <button
                         onClick={() => setIsModalOpen(true)}
                         className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600"
