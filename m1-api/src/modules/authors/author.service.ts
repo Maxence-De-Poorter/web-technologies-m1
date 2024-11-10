@@ -10,8 +10,7 @@ export class AuthorService {
     private authorRepository: Repository<Author>,
   ) {}
 
-  // Récupère tous les auteurs avec des filtres
-  async findAll(name?: string, minBooks?: number): Promise<any[]> {
+  async findAuthors(name: string = "", minBooks: number = 0): Promise<any[]> {
     const query = this.authorRepository
       .createQueryBuilder('author')
       .leftJoinAndSelect('author.books', 'book')
@@ -25,10 +24,10 @@ export class AuthorService {
       .groupBy('author.id');
 
     if (name) {
-      query.andWhere('author.first_name LIKE :name OR author.last_name LIKE :name', { name: `%${name}%` });
+      query.andWhere("author.first_name LIKE :name OR author.last_name LIKE :name", { name: `%${name}%` });
     }
 
-    if (minBooks !== undefined) {
+    if (minBooks) {
       query.having('COUNT(book.id) >= :minBooks', { minBooks });
     }
 
@@ -43,8 +42,7 @@ export class AuthorService {
     }));
   }
 
-  // Récupère un auteur spécifique avec ses livres
-  async findOne(id: string): Promise<Author> {
+  async findOne(id: string): Promise<Author | undefined> {
     const author = await this.authorRepository.findOne({
       where: { id },
       relations: ['books'],
@@ -55,5 +53,17 @@ export class AuthorService {
     }
 
     return author;
+  }
+
+  async createAuthor(authorData: { first_name: string; last_name: string; photo?: string }): Promise<Author> {
+    const defaultPhotoUrl = 'https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Image-Background.png';
+
+    const newAuthor = this.authorRepository.create({
+      first_name: authorData.first_name,
+      last_name: authorData.last_name,
+      photo: authorData.photo || defaultPhotoUrl,
+    });
+
+    return this.authorRepository.save(newAuthor);
   }
 }
