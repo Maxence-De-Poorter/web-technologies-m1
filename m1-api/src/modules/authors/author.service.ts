@@ -10,9 +10,9 @@ export class AuthorService {
     private authorRepository: Repository<Author>,
   ) {}
 
-  // Récupère tous les auteurs avec le comptage des livres
-  async findAll(): Promise<any[]> {
-    const authors = await this.authorRepository
+  // Récupère tous les auteurs avec des filtres
+  async findAll(name?: string, minBooks?: number): Promise<any[]> {
+    const query = this.authorRepository
       .createQueryBuilder('author')
       .leftJoinAndSelect('author.books', 'book')
       .select([
@@ -22,8 +22,17 @@ export class AuthorService {
         'author.photo',
       ])
       .addSelect('COUNT(book.id)', 'bookCount')
-      .groupBy('author.id')
-      .getRawMany();
+      .groupBy('author.id');
+
+    if (name) {
+      query.andWhere('author.first_name LIKE :name OR author.last_name LIKE :name', { name: `%${name}%` });
+    }
+
+    if (minBooks !== undefined) {
+      query.having('COUNT(book.id) >= :minBooks', { minBooks });
+    }
+
+    const authors = await query.getRawMany();
 
     return authors.map(author => ({
       id: author.author_id,
