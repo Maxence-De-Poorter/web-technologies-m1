@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Breadcrumb from "../../../components/Breadcrumb";
 import PageTitle from "../../../components/PageTitle";
 
@@ -58,7 +59,16 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
 
             <div className="p-6 bg-white rounded-lg shadow-md">
                 <h2 className="text-2xl font-semibold">{book.title}</h2>
-                <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
+                <p>
+                    Auteur :{" "}
+                    {book.author ? (
+                        <Link href={`/authors/${book.author.id}`} className="text-blue-500 hover:underline">
+                            {book.author.first_name} {book.author.last_name}
+                        </Link>
+                    ) : (
+                        "Auteur inconnu"
+                    )}
+                </p>
                 <p>Date de publication : {book.year_published}</p>
                 <p>Prix : {book.price}$</p>
             </div>
