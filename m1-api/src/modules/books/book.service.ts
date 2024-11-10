@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Book } from './book.entity';
@@ -53,5 +53,12 @@ export class BookService {
       where: { id },
       relations: ['author'], // Inclure l'auteur pour les détails du livre
     });
+  }
+
+  async deleteBook(id: string): Promise<void> {
+    const result = await this.bookRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Le livre avec l'ID ${id} n'existe pas.`);
+    }
   }
 }
