@@ -60,7 +60,7 @@ export class AuthorService {
 
     const newAuthor = this.authorRepository.create({
       first_name: authorData.first_name,
-      last_name: authorData.last_name,
+      last_name: authorData.last_name.toUpperCase(),
       photo: authorData.photo || defaultPhotoUrl,
     });
 
