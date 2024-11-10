@@ -13,7 +13,7 @@ export class Book {
   year_published: number;
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
-  price: string;
+  price: number;
 
   @ManyToOne(() => Author, (author) => author.books, { nullable: false })
   @JoinColumn({ name: 'author_id' })
