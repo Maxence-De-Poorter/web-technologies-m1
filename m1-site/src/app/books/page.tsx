@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Breadcrumb from "../../components/Breadcrumb";
 import PageTitle from "../../components/PageTitle";
@@ -14,6 +15,7 @@ type Book = {
     id: number;
     title: string;
     year_published: number;
+    price: number;
     author?: Author;
 };
 
@@ -24,7 +26,7 @@ export default function BooksPage() {
     const [selectedAuthor, setSelectedAuthor] = useState("");
     const [sortOrder, setSortOrder] = useState("DESC");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newBook, setNewBook] = useState({ title: "", year_published: "", author_id: "" });
+    const [newBook, setNewBook] = useState({ title: "", year_published: "", price: "", author_id: "" });
 
     const fetchBooks = async (title = "", authorId = "", order = "DESC") => {
         try {
@@ -68,7 +70,7 @@ export default function BooksPage() {
                 console.error("Erreur lors de la création du livre");
             }
             setIsModalOpen(false);
-            setNewBook({ title: "", year_published: "", author_id: "" });
+            setNewBook({ title: "", year_published: "", price: "", author_id: "" });
             await fetchBooks(); // Rafraîchit la liste des livres
         } catch (error) {
             console.error("Erreur:", error);
@@ -88,9 +90,9 @@ export default function BooksPage() {
         <div>
             <PageTitle>Liste des livres</PageTitle>
             <Breadcrumb links={[
-                {href: "/", label: "Accueil"},
-                {href: "/books", label: "Liste des livres"},
-            ]}/>
+                { href: "/", label: "Accueil" },
+                { href: "/books", label: "Liste des livres" },
+            ]} />
 
             {/* Modale de création de livre */}
             {isModalOpen && (
@@ -101,19 +103,27 @@ export default function BooksPage() {
                             type="text"
                             placeholder="Titre"
                             value={newBook.title}
-                            onChange={(e) => setNewBook({...newBook, title: e.target.value})}
+                            onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
                         <input
                             type="number"
                             placeholder="Date de publication"
                             value={newBook.year_published}
-                            onChange={(e) => setNewBook({...newBook, year_published: e.target.value})}
+                            onChange={(e) => setNewBook({ ...newBook, year_published: e.target.value })}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="Prix"
+                            value={newBook.price}
+                            onChange={(e) => setNewBook({ ...newBook, price: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
                         <select
                             value={newBook.author_id}
-                            onChange={(e) => setNewBook({...newBook, author_id: e.target.value})}
+                            onChange={(e) => setNewBook({ ...newBook, author_id: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         >
                             <option value="">Sélectionner un auteur</option>
@@ -195,11 +205,14 @@ export default function BooksPage() {
                 <main className="w-3/4 p-6 overflow-y-auto bg-white">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {books.map((book) => (
-                            <div key={book.id} className="border p-4 rounded-lg shadow-md">
-                                <h2 className="text-lg font-semibold">{book.title}</h2>
-                                <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
-                                <p>Date de publication : {book.year_published}</p>
-                            </div>
+                            <Link key={book.id} href={`/books/${book.id}`}>
+                                <div className="border p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-100">
+                                    <h2 className="text-lg font-semibold">{book.title}</h2>
+                                    <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
+                                    <p>Date de publication : {book.year_published}</p>
+                                    <p>Prix : {book.price}$</p>
+                                </div>
+                            </Link>
                         ))}
                     </div>
                 </main>

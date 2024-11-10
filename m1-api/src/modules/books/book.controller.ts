@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Param, NotFoundException, Delete } from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './book.entity';
 
@@ -15,8 +15,22 @@ export class BookController {
     return this.bookService.findBooks(title, authorId, order);
   }
 
+  @Get(':id')
+  async getBookById(@Param('id') id: string): Promise<Book> {
+    const book = await this.bookService.findOne(id);
+    if (!book) {
+      throw new NotFoundException(`Livre avec l'ID ${id} non trouvé`);
+    }
+    return book;
+  }
+
   @Post()
-  async createBook(@Body() bookData: { title: string; year_published: number; author_id: number }): Promise<Book> {
+  async createBook(@Body() bookData: { title: string; year_published: number; price: number; author_id: number }): Promise<Book> {
     return this.bookService.createBook(bookData);
+  }
+
+  @Delete(':id')
+  async deleteBook(@Param('id') id: string): Promise<void> {
+    await this.bookService.deleteBook(id);
   }
 }

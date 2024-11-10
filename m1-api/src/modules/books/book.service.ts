@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Book } from './book.entity';
@@ -33,7 +33,7 @@ export class BookService {
     });
   }
 
-  async createBook(bookData: { title: string; year_published: number; author_id: number }): Promise<Book> {
+  async createBook(bookData: { title: string; year_published: number; author_id: number; price: number }): Promise<Book> {
     const author = await this.authorRepository.findOne({ where: { id: bookData.author_id.toString() } });
     if (!author) {
       throw new Error('Auteur non trouvé');
@@ -42,9 +42,24 @@ export class BookService {
     const newBook = this.bookRepository.create({
       title: bookData.title,
       year_published: bookData.year_published,
+      price: bookData.price,
       author: author,
     });
 
     return this.bookRepository.save(newBook);
+  }
+
+  async findOne(id: string): Promise<Book | undefined> {
+    return this.bookRepository.findOne({
+      where: { id },
+      relations: ['author'], // Inclure l'auteur pour les détails du livre
+    });
+  }
+
+  async deleteBook(id: string): Promise<void> {
+    const result = await this.bookRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Le livre avec l'ID ${id} n'existe pas.`);
+    }
   }
 }
