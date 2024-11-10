@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Breadcrumb from "../../components/Breadcrumb";
 import PageTitle from "../../components/PageTitle";
@@ -195,11 +196,14 @@ export default function BooksPage() {
                 <main className="w-3/4 p-6 overflow-y-auto bg-white">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {books.map((book) => (
-                            <div key={book.id} className="border p-4 rounded-lg shadow-md">
-                                <h2 className="text-lg font-semibold">{book.title}</h2>
-                                <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
-                                <p>Date de publication : {book.year_published}</p>
-                            </div>
+                            <Link key={book.id} href={`/books/${book.id}`}>
+                                <div className="border p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-100">
+                                    <h2 className="text-lg font-semibold">{book.title}</h2>
+                                    <p>Auteur
+                                        : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
+                                    <p>Date de publication : {book.year_published}</p>
+                                </div>
+                            </Link>
                         ))}
                     </div>
                 </main>
