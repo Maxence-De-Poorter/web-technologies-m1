@@ -47,4 +47,11 @@ export class BookService {
 
     return this.bookRepository.save(newBook);
   }
+
+  async findOne(id: string): Promise<Book | undefined> {
+    return this.bookRepository.findOne({
+      where: { id },
+      relations: ['author'], // Inclure l'auteur pour les détails du livre
+    });
+  }
 }
