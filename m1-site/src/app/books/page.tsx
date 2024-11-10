@@ -129,7 +129,7 @@ export default function BooksPage() {
                             <option value="">Sélectionner un auteur</option>
                             {authors.map((author) => (
                                 <option key={author.id} value={author.id}>
-                                    {author.first_name} {author.last_name}
+                                    {author.last_name} {author.first_name}
                                 </option>
                             ))}
                         </select>
@@ -172,7 +172,7 @@ export default function BooksPage() {
                         <option value="">Tous les auteurs</option>
                         {authors.map((author) => (
                             <option key={author.id} value={author.id}>
-                                {author.first_name} {author.last_name}
+                                {author.last_name} {author.first_name}
                             </option>
                         ))}
                     </select>
