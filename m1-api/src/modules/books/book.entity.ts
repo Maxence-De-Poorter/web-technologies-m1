@@ -12,6 +12,9 @@ export class Book {
   @Column()
   year_published: number;
 
+  @Column('decimal')
+  price: number;
+
   @ManyToOne(() => Author, (author) => author.books, { nullable: false })
   @JoinColumn({ name: 'author_id' })
   author: Author;
