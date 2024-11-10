@@ -21,7 +21,8 @@ export class AuthorService {
         'author.photo',
       ])
       .addSelect('COUNT(book.id)', 'bookCount')
-      .groupBy('author.id');
+      .groupBy('author.id')
+      .orderBy('author.last_name', 'ASC');
 
     if (name) {
       query.andWhere("author.first_name LIKE :name OR author.last_name LIKE :name", { name: `%${name}%` });
