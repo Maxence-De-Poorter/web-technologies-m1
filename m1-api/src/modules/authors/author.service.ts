@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Author } from './author.entity';
@@ -10,26 +10,41 @@ export class AuthorService {
     private authorRepository: Repository<Author>,
   ) {}
 
-  // Récupère tous les auteurs sans inclure les livres
-  async findAll(): Promise<Author[]> {
-    return this.authorRepository.find({
-      select: {
-        id: true,
-        first_name: true,
-        last_name: true,
-      },
-    });
+  // Récupère tous les auteurs avec le comptage des livres
+  async findAll(): Promise<any[]> {
+    const authors = await this.authorRepository
+      .createQueryBuilder('author')
+      .leftJoinAndSelect('author.books', 'book')
+      .select([
+        'author.id',
+        'author.first_name',
+        'author.last_name',
+        'author.photo',
+      ])
+      .addSelect('COUNT(book.id)', 'bookCount')
+      .groupBy('author.id')
+      .getRawMany();
+
+    return authors.map(author => ({
+      id: author.author_id,
+      first_name: author.author_first_name,
+      last_name: author.author_last_name,
+      photo: author.author_photo,
+      bookCount: parseInt(author.bookCount, 10),
+    }));
   }
 
-  // Récupère un auteur spécifique sans inclure les livres
+  // Récupère un auteur spécifique avec ses livres
   async findOne(id: string): Promise<Author> {
-    return this.authorRepository.findOne({
+    const author = await this.authorRepository.findOne({
       where: { id },
-      select: {
-        id: true,
-        first_name: true,
-        last_name: true,
-      },
+      relations: ['books'],
     });
+
+    if (!author) {
+      throw new NotFoundException(`Auteur avec l'ID ${id} non trouvé`);
+    }
+
+    return author;
   }
 }
