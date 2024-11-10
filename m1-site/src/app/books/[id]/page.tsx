@@ -14,6 +14,7 @@ type Book = {
     id: number;
     title: string;
     year_published: number;
+    price: number;
     author?: Author;
 };
 
@@ -59,6 +60,7 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                 <h2 className="text-2xl font-semibold">{book.title}</h2>
                 <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
                 <p>Date de publication : {book.year_published}</p>
+                <p>Prix : {book.price}$</p>
             </div>
         </div>
     );
