@@ -33,7 +33,7 @@ export class BookService {
     });
   }
 
-  async createBook(bookData: { title: string; year_published: number; author_id: number }): Promise<Book> {
+  async createBook(bookData: { title: string; year_published: number; author_id: number; price: number }): Promise<Book> {
     const author = await this.authorRepository.findOne({ where: { id: bookData.author_id.toString() } });
     if (!author) {
       throw new Error('Auteur non trouvé');
@@ -42,6 +42,7 @@ export class BookService {
     const newBook = this.bookRepository.create({
       title: bookData.title,
       year_published: bookData.year_published,
+      price: bookData.price,
       author: author,
     });
 

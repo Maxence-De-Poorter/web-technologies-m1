@@ -25,7 +25,7 @@ export class BookController {
   }
 
   @Post()
-  async createBook(@Body() bookData: { title: string; year_published: number; author_id: number }): Promise<Book> {
+  async createBook(@Body() bookData: { title: string; year_published: number; price: number; author_id: number }): Promise<Book> {
     return this.bookService.createBook(bookData);
   }
 
