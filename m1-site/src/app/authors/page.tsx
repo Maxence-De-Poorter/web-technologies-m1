@@ -10,6 +10,7 @@ type Author = {
     first_name: string;
     last_name: string;
     photo: string;
+    biography: string;
     bookCount: number;
 };
 
@@ -19,7 +20,7 @@ export default function AuthorsPage() {
     const [minBookCount, setMinBookCount] = useState<number | "">("");
     const [sortOrder, setSortOrder] = useState("ASC"); // Nouvel état pour l'ordre de tri
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newAuthor, setNewAuthor] = useState({ first_name: "", last_name: "", photo: "" });
+    const [newAuthor, setNewAuthor] = useState({ first_name: "", last_name: "", photo: "", biography: "" });
 
     const fetchAuthors = async (name = "", minBooks = "", order = "ASC") => {
         try {
@@ -51,7 +52,7 @@ export default function AuthorsPage() {
                 console.error("Erreur lors de la création de l'auteur");
             }
             setIsModalOpen(false);
-            setNewAuthor({ first_name: "", last_name: "", photo: "" });
+            setNewAuthor({ first_name: "", last_name: "", photo: "", biography:"" });
             await fetchAuthors(); // Rafraîchit la liste des auteurs
         } catch (error) {
             console.error("Erreur:", error);
@@ -83,21 +84,28 @@ export default function AuthorsPage() {
                             type="text"
                             placeholder="Prénom"
                             value={newAuthor.first_name}
-                            onChange={(e) => setNewAuthor({ ...newAuthor, first_name: e.target.value })}
+                            onChange={(e) => setNewAuthor({...newAuthor, first_name: e.target.value})}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
                         <input
                             type="text"
                             placeholder="Nom"
                             value={newAuthor.last_name}
-                            onChange={(e) => setNewAuthor({ ...newAuthor, last_name: e.target.value })}
+                            onChange={(e) => setNewAuthor({...newAuthor, last_name: e.target.value})}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
                         <input
                             type="text"
                             placeholder="URL de la photo"
                             value={newAuthor.photo}
-                            onChange={(e) => setNewAuthor({ ...newAuthor, photo: e.target.value })}
+                            onChange={(e) => setNewAuthor({...newAuthor, photo: e.target.value})}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="text"
+                            placeholder="biographie"
+                            value={newAuthor.photo}
+                            onChange={(e) => setNewAuthor({...newAuthor, biography: e.target.value})}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
                         <div className="flex justify-end">
@@ -167,9 +175,11 @@ export default function AuthorsPage() {
                         {authors.map((author) => (
                             <Link key={author.id} href={`/authors/${author.id}`}>
                                 <div className="border p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-100">
-                                    <img src={author.photo} alt={`${author.first_name} ${author.last_name}`} className="w-full h-32 object-contain rounded-full mb-4" />
+                                    <img src={author.photo} alt={`${author.first_name} ${author.last_name}`}
+                                         className="w-full h-32 object-contain rounded-full mb-4"/>
                                     <h2 className="text-lg font-semibold">{author.first_name} {author.last_name}</h2>
                                     <p>Nombre de livres : {author.bookCount}</p>
+                                    <p>Biographie : {author.biography}</p>
                                 </div>
                             </Link>
                         ))}
