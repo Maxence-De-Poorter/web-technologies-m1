@@ -104,7 +104,7 @@ export default function AuthorsPage() {
                         <input
                             type="text"
                             placeholder="biographie"
-                            value={newAuthor.photo}
+                            value={newAuthor.biography}
                             onChange={(e) => setNewAuthor({...newAuthor, biography: e.target.value})}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
