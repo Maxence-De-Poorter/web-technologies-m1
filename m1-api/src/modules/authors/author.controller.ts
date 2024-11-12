@@ -25,7 +25,7 @@ export class AuthorController {
   }
 
   @Post()
-  async createAuthor(@Body() authorData: { first_name: string; last_name: string; photo: string }): Promise<Author> {
+  async createAuthor(@Body() authorData: { first_name: string; last_name: string; photo: string; biography: string }): Promise<Author> {
     return this.authorService.createAuthor(authorData);
   }
 }
