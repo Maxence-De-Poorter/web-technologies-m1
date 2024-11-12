@@ -77,4 +77,12 @@ export class AuthorService {
       throw new NotFoundException(`L'auteur avec l'ID ${id} n'existe pas.`);
     }
   }
+  async updateAuthor(id: string, authorData: { first_name: string; last_name: string; photo: string; biography: string }): Promise<Author> {
+    const author = await this.authorRepository.findOneBy({ id });
+    if (!author) {
+      throw new NotFoundException(`L'auteur avec l'ID ${id} n'existe pas.`);
+    }
+    Object.assign(author, authorData);
+    return this.authorRepository.save(author);
+  }
 }

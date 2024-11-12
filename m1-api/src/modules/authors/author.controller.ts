@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, Query, Param, NotFoundException, Delete} from '@nestjs/common';
+import {Controller, Get, Post, Put, Body, Query, Param, NotFoundException, Delete} from '@nestjs/common';
 import { AuthorService } from './author.service';
 import { Author } from './author.entity';
 
@@ -31,5 +31,12 @@ export class AuthorController {
   @Delete(':id')
   async deleteAuthor(@Param('id') id: string): Promise<void> {
     await this.authorService.deleteAuthor(id);
+  }
+  @Put(':id')
+  async updateAuthor(
+      @Param('id') id: string,
+      @Body() authorData: { first_name: string; last_name: string; photo: string; biography: string }
+  ): Promise<Author> {
+    return this.authorService.updateAuthor(id, authorData);
   }
 }
