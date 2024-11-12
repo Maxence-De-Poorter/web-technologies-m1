@@ -15,6 +15,10 @@ export class Author {
   @Column({ nullable: true })
   photo: string;
 
+  @Column({ nullable: true })
+  biography: string;
+
+
   @OneToMany(() => Book, (book) => book.author)
   books: Book[];
 }
