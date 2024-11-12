@@ -70,4 +70,11 @@ export class AuthorService {
 
     return this.authorRepository.save(newAuthor);
   }
+
+  async deleteAuthor(id: string): Promise<void> {
+    const result = await this.authorRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`L'auteur avec l'ID ${id} n'existe pas.`);
+    }
+  }
 }
