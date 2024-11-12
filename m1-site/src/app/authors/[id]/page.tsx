@@ -15,7 +15,7 @@ type Author = {
 };
 
 type Book = {
-    id: number;
+    id: string;
     title: string;
     year_published: number;
     price: number;
@@ -29,6 +29,7 @@ interface AuthorDetailsPageProps {
 export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
     const [author, setAuthor] = useState<Author | null>(null);
     const [books, setBooks] = useState<Book[]>([]);
+    const [isDeleteModalBookOpen, setIsDeleteModalBookOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedBook, setSelectedBook] = useState<Book | null>(null); // Ajout de l'état pour le livre sélectionné
     const router = useRouter();
@@ -75,12 +76,37 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
     };
 
     const openDeleteModal = (book: Book) => {
-        setSelectedBook(book);  // Met à jour l'état avec le livre sélectionné
         setIsDeleteModalOpen(true);
     };
 
     const closeDeleteModal = () => {
         setIsDeleteModalOpen(false);
+    };
+
+    const handleDeleteAuthor = async () => {
+        if (author) {
+            try {
+                const response = await fetch(`http://localhost:3001/authors/${author.id}`, {
+                    method: "DELETE",
+                });
+                if (!response.ok) {
+                    console.error("Erreur lors de la suppression de cet auteur");
+                    return;
+                }
+                router.push("/authors");
+            } catch (error) {
+                console.error("Erreur:", error);
+            }
+        }
+    };
+
+    const openDeleteBookModal = (book: Book) => {
+        setSelectedBook(book);  // Met à jour l'état avec le livre sélectionné
+        setIsDeleteModalBookOpen(true);
+    };
+
+    const closeDeleteBookModal = () => {
+        setIsDeleteModalBookOpen(false);
         setSelectedBook(null); // Réinitialise le livre sélectionné
     };
 
@@ -128,7 +154,7 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
                                 {books.map(book => (
                                     <li key={book.id} className="mb-2">
                                         <span className="font-medium">{book.title}</span> - {book.year_published} - {book.price}$
-                                        <button onClick={() => openDeleteModal(book)} className="ml-4 text-red-500 hover:underline">Supprimer</button>
+                                        <button onClick={() => openDeleteBookModal(book)} className="ml-4 text-red-500 hover:underline">Supprimer</button>
                                     </li>
                                 ))}
                             </ul>
@@ -139,14 +165,27 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
                 </main>
             </div>
 
-            {isDeleteModalOpen && (
+            {isDeleteModalBookOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h2 className="text-xl font-semibold mb-4">Confirmer la suppression</h2>
                         <p>Êtes-vous sûr de vouloir supprimer ce livre ?</p>
                         <div className="flex justify-end mt-4">
-                            <button onClick={closeDeleteModal} className="p-2 mr-2 bg-gray-300 rounded hover:bg-gray-400">Annuler</button>
+                            <button onClick={closeDeleteBookModal} className="p-2 mr-2 bg-gray-300 rounded hover:bg-gray-400">Annuler</button>
                             <button onClick={handleDeleteBook} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">Confirmer</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isDeleteModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                        <h2 className="text-xl font-semibold mb-4">Confirmer la suppression</h2>
+                        <p>Êtes-vous sûr de vouloir supprimer l'auteur {author.first_name + " " + author.last_name} ?</p>
+                        <div className="flex justify-end mt-4">
+                            <button onClick={closeDeleteModal} className="p-2 mr-2 bg-gray-300 rounded hover:bg-gray-400">Annuler</button>
+                            <button onClick={handleDeleteAuthor} className="p-2 bg-red-500 text-white rounded hover:bg-red-600">Confirmer</button>
                         </div>
                     </div>
                 </div>
