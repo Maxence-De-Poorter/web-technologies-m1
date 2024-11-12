@@ -7,7 +7,7 @@ const Footer = () => (
             <li><Link href={"/books"} className="text-white hover:text-gray-300">Livres</Link></li>
             <li><Link href={"/authors"} className="text-white hover:text-gray-300">Auteurs</Link></li>
         </ul>
-        <p className="text-center text-white mt-4">&copy; 2024 M1 - Web Technologies. Tous droits réservés.</p>
+        <p className="text-center text-white mt-4">&copy; 2024 M1 - Technologies Web. Tous droits réservés.</p>
     </footer>
 );
 
