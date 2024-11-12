@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 // src/app/layout.tsx ou src/pages/_app.js
 import '../styles/globals.css';
 
@@ -22,6 +23,7 @@ export default function Layout({
           <div className="p-10">
               {children}
           </div>
+          <Footer/>
           </body>
       </html>
   )
