@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Breadcrumb from "../../../components/Breadcrumb";
 import PageTitle from "../../../components/PageTitle";
 
+// Type definitions for Author and Book
 type Author = {
     id: number;
     first_name: string;
@@ -20,6 +21,7 @@ type Book = {
     author?: Author;
 };
 
+// Props interface for the BookDetailsPage component
 interface BookDetailsPageProps {
     params: { id: string };
 }
@@ -33,17 +35,19 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
     const [editedPrice, setEditedPrice] = useState<number | "">("");
     const router = useRouter();
 
+    // Fetch book details on component mount or when the book ID changes
     useEffect(() => {
         if (params.id) {
             fetchBookDetails(params.id);
         }
     }, [params.id]);
 
+    // Function to fetch book details by ID
     const fetchBookDetails = async (bookId: string) => {
         try {
             const response = await fetch(`http://localhost:3001/books/${bookId}`);
             if (!response.ok) {
-                console.error("Erreur lors de la récupération du livre");
+                console.error("Error fetching the book details");
                 return;
             }
             const data = await response.json();
@@ -52,15 +56,17 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
             setEditedYearPublished(data.year_published);
             setEditedPrice(data.price);
         } catch (error) {
-            console.error("Erreur:", error);
+            console.error("Error:", error);
         }
     };
 
+    // Modal open/close functions for delete and edit actions
     const openDeleteModal = () => setIsDeleteModalOpen(true);
     const closeDeleteModal = () => setIsDeleteModalOpen(false);
     const openEditModal = () => setIsEditModalOpen(true);
     const closeEditModal = () => setIsEditModalOpen(false);
 
+    // Function to handle book deletion
     const handleDeleteBook = async () => {
         if (book) {
             try {
@@ -68,16 +74,17 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                     method: "DELETE",
                 });
                 if (!response.ok) {
-                    console.error("Erreur lors de la suppression du livre");
+                    console.error("Error deleting the book");
                     return;
                 }
                 router.push("/books");
             } catch (error) {
-                console.error("Erreur:", error);
+                console.error("Error:", error);
             }
         }
     };
 
+    // Function to handle book update
     const handleEditBook = async () => {
         if (book) {
             try {
@@ -91,25 +98,26 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                     }),
                 });
                 if (!response.ok) {
-                    console.error("Erreur lors de la modification du livre");
+                    console.error("Error updating the book");
                     return;
                 }
                 closeEditModal();
                 fetchBookDetails(book.id.toString());
             } catch (error) {
-                console.error("Erreur:", error);
+                console.error("Error:", error);
             }
         }
     };
 
-    if (!book) return <p>Chargement...</p>;
+    // Render loading message if book details are not yet available
+    if (!book) return <p>Loading...</p>;
 
     return (
         <div>
-            <PageTitle>Détails du livre</PageTitle>
+            <PageTitle>Book Details</PageTitle>
             <Breadcrumb links={[
-                { href: "/", label: "Accueil" },
-                { href: "/books", label: "Liste des livres" },
+                { href: "/", label: "Home" },
+                { href: "/books", label: "Books List" },
                 { href: `/books/${book.id}`, label: book.title }
             ]} />
 
@@ -120,69 +128,69 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                         onClick={openEditModal}
                         className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-4"
                     >
-                        Modifier ce livre
+                        Edit this Book
                     </button>
                     <button
                         onClick={openDeleteModal}
                         className="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600 mt-4"
                     >
-                        Supprimer ce livre
+                        Delete this Book
                     </button>
                 </aside>
 
                 <main className="w-3/4 p-6 overflow-y-auto bg-white">
                     <div className="border p-4 rounded-lg shadow-md">
                         <h2 className="text-2xl font-semibold mb-4">{book.title}</h2>
-                        <p>Auteur : {book.author ? (
+                        <p>Author: {book.author ? (
                             <Link href={`/authors/${book.author.id}`} className="text-blue-500 hover:underline">
                                 {book.author.first_name} {book.author.last_name}
                             </Link>
-                        ) : "Auteur inconnu"}</p>
-                        <p>Date de publication : {book.year_published}</p>
-                        <p>Prix : {book.price}$</p>
+                        ) : "Unknown Author"}</p>
+                        <p>Publication Year: {book.year_published}</p>
+                        <p>Price: {book.price}$</p>
                     </div>
                 </main>
             </div>
 
-            {/* Modal de confirmation de suppression */}
+            {/* Delete confirmation modal */}
             {isDeleteModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                        <h2 className="text-xl font-semibold mb-4">Confirmer la suppression</h2>
-                        <p>Êtes-vous sûr de vouloir supprimer le livre "{book.title}" ?</p>
+                        <h2 className="text-xl font-semibold mb-4">Confirm Deletion</h2>
+                        <p>Are you sure you want to delete the book "{book.title}"?</p>
                         <div className="flex justify-end mt-4">
                             <button
                                 onClick={closeDeleteModal}
                                 className="p-2 mr-2 bg-gray-300 rounded hover:bg-gray-400"
                             >
-                                Annuler
+                                Cancel
                             </button>
                             <button
                                 onClick={handleDeleteBook}
                                 className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
                             >
-                                Confirmer
+                                Confirm
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Modal de modification */}
+            {/* Edit book modal */}
             {isEditModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                        <h2 className="text-xl font-semibold mb-4">Modifier le livre</h2>
+                        <h2 className="text-xl font-semibold mb-4">Edit Book</h2>
                         <input
                             type="text"
-                            placeholder="Titre"
+                            placeholder="Title"
                             value={editedTitle}
                             onChange={(e) => setEditedTitle(e.target.value)}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
                         <input
                             type="number"
-                            placeholder="Date de publication"
+                            placeholder="Publication Year"
                             value={editedYearPublished}
                             onChange={(e) => setEditedYearPublished(Number(e.target.value))}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
@@ -190,7 +198,7 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                         <input
                             type="number"
                             step="0.01"
-                            placeholder="Prix"
+                            placeholder="Price"
                             value={editedPrice}
                             onChange={(e) => setEditedPrice(Number(e.target.value))}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
@@ -200,13 +208,13 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                                 onClick={closeEditModal}
                                 className="p-2 mr-2 bg-gray-300 rounded hover:bg-gray-400"
                             >
-                                Annuler
+                                Cancel
                             </button>
                             <button
                                 onClick={handleEditBook}
                                 className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                             >
-                                Enregistrer
+                                Save
                             </button>
                         </div>
                     </div>
