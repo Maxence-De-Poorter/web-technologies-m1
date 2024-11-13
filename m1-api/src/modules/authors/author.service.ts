@@ -2,28 +2,30 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Author } from './author.entity';
+import { CreateAuthorDto } from './dto/create-author.dto';
+import { UpdateAuthorDto } from './dto/update-author.dto';
 
 @Injectable()
 export class AuthorService {
   constructor(
-      @InjectRepository(Author)
-      private authorRepository: Repository<Author>,
+    @InjectRepository(Author)
+    private authorRepository: Repository<Author>,
   ) {}
 
   async findAuthors(name: string = "", minBooks: number = 0, order: 'ASC' | 'DESC' = 'ASC'): Promise<any[]> {
     const query = this.authorRepository
-        .createQueryBuilder('author')
-        .leftJoinAndSelect('author.books', 'book')
-        .select([
-          'author.id',
-          'author.first_name',
-          'author.last_name',
-          'author.photo',
-          'author.biography',
-        ])
-        .addSelect('COUNT(book.id)', 'bookCount')
-        .groupBy('author.id')
-        .orderBy('author.last_name', order); // Utilise le paramètre `order` pour le tri
+      .createQueryBuilder('author')
+      .leftJoinAndSelect('author.books', 'book')
+      .select([
+        'author.id',
+        'author.first_name',
+        'author.last_name',
+        'author.photo',
+        'author.biography',
+      ])
+      .addSelect('COUNT(book.id)', 'bookCount')
+      .groupBy('author.id')
+      .orderBy('author.last_name', order);
 
     if (name) {
       query.andWhere("author.first_name LIKE :name OR author.last_name LIKE :name", { name: `%${name}%` });
@@ -52,20 +54,19 @@ export class AuthorService {
     });
 
     if (!author) {
-      throw new NotFoundException(`Auteur avec l'ID ${id} non trouvé`);
+      throw new NotFoundException(`Author with ID ${id} not found`);
     }
 
     return author;
   }
 
-  async createAuthor(authorData: { first_name: string; last_name: string; photo?: string; biography?: string; }): Promise<Author> {
+  async createAuthor(createAuthorDto: CreateAuthorDto): Promise<Author> {
     const defaultPhotoUrl = 'https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Image-Background.png';
 
     const newAuthor = this.authorRepository.create({
-      first_name: authorData.first_name,
-      last_name: authorData.last_name.toUpperCase(),
-      photo: authorData.photo || defaultPhotoUrl,
-      biography: authorData.biography || '',
+      ...createAuthorDto,
+      last_name: createAuthorDto.last_name.toUpperCase(),
+      photo: createAuthorDto.photo || defaultPhotoUrl,
     });
 
     return this.authorRepository.save(newAuthor);
@@ -74,15 +75,16 @@ export class AuthorService {
   async deleteAuthor(id: string): Promise<void> {
     const result = await this.authorRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`L'auteur avec l'ID ${id} n'existe pas.`);
+      throw new NotFoundException(`Author with ID ${id} does not exist`);
     }
   }
-  async updateAuthor(id: string, authorData: { first_name: string; last_name: string; photo: string; biography: string }): Promise<Author> {
+
+  async updateAuthor(id: string, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
     const author = await this.authorRepository.findOneBy({ id });
     if (!author) {
-      throw new NotFoundException(`L'auteur avec l'ID ${id} n'existe pas.`);
+      throw new NotFoundException(`Author with ID ${id} does not exist`);
     }
-    Object.assign(author, authorData);
+    Object.assign(author, updateAuthorDto);
     return this.authorRepository.save(author);
   }
 }

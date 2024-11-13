@@ -1,6 +1,8 @@
-import {Controller, Get, Post, Put, Body, Query, Param, NotFoundException, Delete} from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Query, Param, NotFoundException, Delete } from '@nestjs/common';
 import { AuthorService } from './author.service';
 import { Author } from './author.entity';
+import { CreateAuthorDto } from './dto/create-author.dto';
+import { UpdateAuthorDto } from './dto/update-author.dto';
 
 @Controller('authors')
 export class AuthorController {
@@ -10,7 +12,7 @@ export class AuthorController {
   async getAuthors(
     @Query('name') name: string,
     @Query('minBooks') minBooks: string,
-    @Query('order') order: 'ASC' | 'DESC' = 'ASC', // Ajoute le paramètre `order`
+    @Query('order') order: 'ASC' | 'DESC' = 'ASC',
   ): Promise<any[]> {
     return this.authorService.findAuthors(name, minBooks ? parseInt(minBooks, 10) : 0, order);
   }
@@ -19,24 +21,26 @@ export class AuthorController {
   async getAuthorById(@Param('id') id: string): Promise<Author> {
     const author = await this.authorService.findOne(id);
     if (!author) {
-      throw new NotFoundException(`Auteur avec l'ID ${id} non trouvé`);
+      throw new NotFoundException(`Author with ID ${id} not found`);
     }
     return author;
   }
 
   @Post()
-  async createAuthor(@Body() authorData: { first_name: string; last_name: string; photo: string; biography: string }): Promise<Author> {
-    return this.authorService.createAuthor(authorData);
+  async createAuthor(@Body() createAuthorDto: CreateAuthorDto): Promise<Author> {
+    return this.authorService.createAuthor(createAuthorDto);
   }
+
   @Delete(':id')
   async deleteAuthor(@Param('id') id: string): Promise<void> {
     await this.authorService.deleteAuthor(id);
   }
+
   @Put(':id')
   async updateAuthor(
-      @Param('id') id: string,
-      @Body() authorData: { first_name: string; last_name: string; photo: string; biography: string }
+    @Param('id') id: string,
+    @Body() updateAuthorDto: UpdateAuthorDto,
   ): Promise<Author> {
-    return this.authorService.updateAuthor(id, authorData);
+    return this.authorService.updateAuthor(id, updateAuthorDto);
   }
 }
