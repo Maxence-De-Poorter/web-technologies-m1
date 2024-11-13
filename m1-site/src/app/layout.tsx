@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import '../styles/globals.css';
+import React from "react";
 
 export const metadata = {
   title: 'Next.js',
