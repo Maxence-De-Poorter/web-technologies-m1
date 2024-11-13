@@ -39,7 +39,10 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
     // Fetch book details on component mount or when the book ID changes
     useEffect(() => {
         if (params.id) {
-            fetchBookDetails(params.id);
+            fetchBookDetails(params.id)
+                .catch(error => {
+                    console.error("Error in fetching data:", error);
+                });
         }
     }, [params.id]);
 
@@ -107,7 +110,7 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                     return;
                 }
                 closeEditModal();
-                fetchBookDetails(book.id.toString());
+                await fetchBookDetails(book.id.toString());
             } catch (error) {
                 console.error("Error:", error);
                 setEditErrorMessage("An error occurred. Please check the fields."); // Set error message on catch

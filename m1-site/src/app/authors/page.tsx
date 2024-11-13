@@ -68,12 +68,17 @@ export default function AuthorsPage() {
 
     // Initial fetch for authors on component mount
     useEffect(() => {
-        fetchAuthors();
+        fetchAuthors().catch(error => {
+            console.error("Error in fetching data:", error);
+        });
     }, []);
 
     // Apply filters for fetching authors
     const handleApplyFilters = () => {
-        fetchAuthors(searchName, minBookCount, sortOrder);
+        fetchAuthors(searchName, minBookCount.toString(), sortOrder)
+            .catch(error => {
+                console.error("Error in fetching data:", error);
+            });
     };
 
     return (
