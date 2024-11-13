@@ -81,7 +81,7 @@ export default function BooksPage() {
             });
 
             if (!response.ok) {
-                setErrorMessage("An error occurred. Please check the fields."); // Set error message
+                setErrorMessage("An error occurred. Please check the fields and try again."); // Set error message
             } else {
                 setIsModalOpen(false);
                 setNewBook({ title: "", year_published: "", price: "", author_id: "" });
@@ -90,7 +90,7 @@ export default function BooksPage() {
             }
         } catch (error) {
             console.error("Error:", error);
-            setErrorMessage("An error occurred. Please check the fields."); // Set error message on catch
+            setErrorMessage("An error occurred. Please check the fields and try again."); // Set error message on catch
         }
     };
 
@@ -117,13 +117,6 @@ export default function BooksPage() {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h2 className="text-xl font-semibold mb-4">Create a New Book</h2>
-
-                        {/* Display error message if there's an error */}
-                        {errorMessage && (
-                            <div className="text-red-500 mb-4">
-                                {errorMessage}
-                            </div>
-                        )}
 
                         <input
                             type="text"
@@ -159,6 +152,12 @@ export default function BooksPage() {
                                 </option>
                             ))}
                         </select>
+                        {/* Display error message if there's an error */}
+                        {errorMessage && (
+                            <div className="text-red-500 mb-4">
+                                {errorMessage}
+                            </div>
+                        )}
                         <div className="flex justify-end">
                             <button
                                 onClick={() => setIsModalOpen(false)}
