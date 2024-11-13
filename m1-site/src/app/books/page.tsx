@@ -95,13 +95,19 @@ export default function BooksPage() {
     };
 
     useEffect(() => {
-        fetchBooks();
-        fetchAuthors();
-    }, []);
+        fetchBooks()
+            .then(() => fetchAuthors())
+            .catch(error => {
+                console.error("Error in fetching data:", error);
+            });
+    }, []);  // Empty dependency array ensures it runs once on mount
 
     // Apply filters to book list
     const handleApplyFilters = () => {
-        fetchBooks(searchTitle, selectedAuthor, sortOrder);
+        fetchBooks(searchTitle, selectedAuthor, sortOrder)
+            .catch(error => {
+                console.error("Error in fetching data:", error);
+            });
     };
 
     return (
