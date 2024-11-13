@@ -122,7 +122,7 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
             ]} />
 
             <div className="flex h-screen w-full">
-                <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[500px] rounded-lg">
+                <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[185px] rounded-lg">
                     <h1 className="text-center font-semibold text-xl">Options</h1>
                     <button
                         onClick={openEditModal}

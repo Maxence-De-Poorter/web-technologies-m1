@@ -28,6 +28,7 @@ export default function BooksPage() {
     const [sortOrder, setSortOrder] = useState("DESC");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newBook, setNewBook] = useState({ title: "", year_published: "", price: "", author_id: "" });
+    const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
     // Fetches books based on search criteria
     const fetchBooks = async (title = "", authorId = "", order = "DESC") => {
@@ -80,14 +81,16 @@ export default function BooksPage() {
             });
 
             if (!response.ok) {
-                console.error("Error creating book");
+                setErrorMessage("An error occurred. Please check the fields."); // Set error message
             } else {
                 setIsModalOpen(false);
                 setNewBook({ title: "", year_published: "", price: "", author_id: "" });
+                setErrorMessage(""); // Clear any previous error
                 await fetchBooks(); // Refresh book list
             }
         } catch (error) {
             console.error("Error:", error);
+            setErrorMessage("An error occurred. Please check the fields."); // Set error message on catch
         }
     };
 
@@ -114,6 +117,14 @@ export default function BooksPage() {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h2 className="text-xl font-semibold mb-4">Create a New Book</h2>
+
+                        {/* Display error message if there's an error */}
+                        {errorMessage && (
+                            <div className="text-red-500 mb-4">
+                                {errorMessage}
+                            </div>
+                        )}
+
                         <input
                             type="text"
                             placeholder="Title"
@@ -168,7 +179,7 @@ export default function BooksPage() {
 
             {/* Book List */}
             <div className="flex h-screen w-full">
-                <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[500px] rounded-lg">
+                <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[350px] rounded-lg">
                     <h1 className="text-center font-semibold text-xl">Filters</h1>
 
                     <input
