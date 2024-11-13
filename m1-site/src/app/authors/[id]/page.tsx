@@ -1,9 +1,7 @@
-
 "use client";
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Breadcrumb from "../../../components/Breadcrumb";
 import PageTitle from "../../../components/PageTitle";
 
@@ -39,8 +37,11 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
 
     useEffect(() => {
         if (params.id) {
-            fetchAuthorDetails(params.id);
-            fetchBooksByAuthor(params.id);
+            fetchAuthorDetails(params.id)
+                .then(() => fetchBooksByAuthor(params.id)
+                    .catch(error => {
+                        console.error("Error in fetching data:", error);
+                    }));
         }
     }, [params.id]);
 
@@ -52,6 +53,7 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
                 return;
             }
             const data = await response.json();
+            console.log(data);
             setAuthor(data);
             setEditFormData({ first_name: data.first_name, last_name: data.last_name, photo: data.photo, biography: data.biography }); // Initialiser les données du formulaire de modification
         } catch (error) {
@@ -61,25 +63,19 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
 
     const fetchBooksByAuthor = async (authorId: string) => {
         try {
-            const response = await fetch(`http://localhost:3001/books`);
+            const response = await fetch(`http://localhost:3001/books/author/${authorId}`);
             if (!response.ok) {
                 console.error("Erreur lors de la récupération des livres");
                 return;
             }
             const data: Book[] = await response.json();
-            const filteredBooks = data.filter((book) => book.author.id === authorId);
-            setBooks(filteredBooks);
-            console.log(filteredBooks);
-
-            if (filteredBooks.length === 0) {
-                console.log("Aucun livre trouvé pour cet auteur.");
-            }
+            setBooks(data);  // Mise à jour des livres de l'auteur
         } catch (error) {
             console.error("Erreur:", error);
         }
     };
 
-    const openDeleteModal = (book: Book) => {
+    const openDeleteModal = () => {
         setIsDeleteModalOpen(true);
     };
 

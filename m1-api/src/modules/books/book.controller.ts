@@ -36,6 +36,11 @@ export class BookController {
     return book;
   }
 
+  @Get('author/:authorId') // Nouveau point de terminaison pour récupérer les livres d'un auteur
+  async getBooksByAuthor(@Param('authorId') authorId: string): Promise<Book[]> {
+    return this.bookService.findBooksByAuthor(authorId);// Appel de la méthode dans le service
+  }
+
   @Post()
   async createBook(@Body() createBookDto: CreateBookDto): Promise<Book> {
     return this.bookService.createBook(createBookDto);

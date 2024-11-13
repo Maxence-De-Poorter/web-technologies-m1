@@ -35,6 +35,13 @@ export class BookService {
     });
   }
 
+  async findBooksByAuthor(authorId: string): Promise<Book[]> {
+    return this.bookRepository.find({
+      where: { author: { id: authorId } },
+      relations: ['author'],
+    });
+  }
+
   async createBook(createBookDto: CreateBookDto): Promise<Book> {
     console.log('Received createBookDto:', createBookDto);
 
