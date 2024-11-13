@@ -33,6 +33,7 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
     const [editedTitle, setEditedTitle] = useState("");
     const [editedYearPublished, setEditedYearPublished] = useState<number | "">("");
     const [editedPrice, setEditedPrice] = useState<number | "">("");
+    const [editErrorMessage, setEditErrorMessage] = useState(""); // Error message state
     const router = useRouter();
 
     // Fetch book details on component mount or when the book ID changes
@@ -64,7 +65,10 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
     const openDeleteModal = () => setIsDeleteModalOpen(true);
     const closeDeleteModal = () => setIsDeleteModalOpen(false);
     const openEditModal = () => setIsEditModalOpen(true);
-    const closeEditModal = () => setIsEditModalOpen(false);
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+        setEditErrorMessage(""); // Reset error message when closing modal
+    };
 
     // Function to handle book deletion
     const handleDeleteBook = async () => {
@@ -98,6 +102,7 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                     }),
                 });
                 if (!response.ok) {
+                    setEditErrorMessage("An error occurred. Please check the fields."); // Set error message
                     console.error("Error updating the book");
                     return;
                 }
@@ -105,6 +110,7 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                 fetchBookDetails(book.id.toString());
             } catch (error) {
                 console.error("Error:", error);
+                setEditErrorMessage("An error occurred. Please check the fields."); // Set error message on catch
             }
         }
     };
@@ -181,6 +187,14 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
                         <h2 className="text-xl font-semibold mb-4">Edit Book</h2>
+
+                        {/* Display error message if there's an error */}
+                        {editErrorMessage && (
+                            <div className="text-red-500 mb-4">
+                                {editErrorMessage}
+                            </div>
+                        )}
+
                         <input
                             type="text"
                             placeholder="Title"
