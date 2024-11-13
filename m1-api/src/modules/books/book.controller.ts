@@ -1,6 +1,18 @@
-import { Controller, Get, Post, Body, Query, Param, NotFoundException, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  Param,
+  NotFoundException,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { BookService } from './book.service';
 import { Book } from './book.entity';
+import { CreateBookDto } from './dto/create-book.dto';
+import { UpdateBookDto } from './dto/update-book.dto';
 
 @Controller('books')
 export class BookController {
@@ -10,7 +22,7 @@ export class BookController {
   async getBooks(
     @Query('title') title: string,
     @Query('author_id') authorId: string,
-    @Query('order') order: 'ASC' | 'DESC' = 'DESC'
+    @Query('order') order: 'ASC' | 'DESC' = 'DESC',
   ): Promise<Book[]> {
     return this.bookService.findBooks(title, authorId, order);
   }
@@ -25,16 +37,16 @@ export class BookController {
   }
 
   @Post()
-  async createBook(@Body() bookData: { title: string; year_published: number; price: number; author_id: number }): Promise<Book> {
-    return this.bookService.createBook(bookData);
+  async createBook(@Body() createBookDto: CreateBookDto): Promise<Book> {
+    return this.bookService.createBook(createBookDto);
   }
 
   @Put(':id')
   async updateBook(
     @Param('id') id: string,
-    @Body() bookData: { title: string; year_published: number; price: number }
+    @Body() updateBookDto: UpdateBookDto,
   ): Promise<Book> {
-    return this.bookService.updateBook(id, bookData);
+    return this.bookService.updateBook(id, updateBookDto);
   }
 
   @Delete(':id')
