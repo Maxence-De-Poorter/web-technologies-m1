@@ -61,17 +61,27 @@ export default function BooksPage() {
 
     const handleCreateBook = async () => {
         try {
+            // Convertir les valeurs en types corrects
+            const bookData = {
+                title: newBook.title,
+                year_published: parseInt(newBook.year_published, 10),
+                price: parseFloat(newBook.price),
+                author_id: newBook.author_id
+            };
+
             const response = await fetch("http://localhost:3001/books", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newBook),
+                body: JSON.stringify(bookData),
             });
+
             if (!response.ok) {
                 console.error("Erreur lors de la création du livre");
+            } else {
+                setIsModalOpen(false);
+                setNewBook({ title: "", year_published: "", price: "", author_id: "" });
+                await fetchBooks(); // Rafraîchit la liste des livres
             }
-            setIsModalOpen(false);
-            setNewBook({ title: "", year_published: "", price: "", author_id: "" });
-            await fetchBooks(); // Rafraîchit la liste des livres
         } catch (error) {
             console.error("Erreur:", error);
         }
