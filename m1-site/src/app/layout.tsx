@@ -20,7 +20,7 @@ export default function Layout({
           </head>
           <body>
           <Navbar/>
-          <div className="p-2">
+          <div className="m-10">
               {children}
           </div>
           <Footer/>
