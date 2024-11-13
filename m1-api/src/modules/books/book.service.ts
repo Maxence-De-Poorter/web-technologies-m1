@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Book } from './book.entity';
 import { Author } from '../authors/author.entity';
+import { CreateBookDto } from './dto/create-book.dto';
+import { UpdateBookDto } from './dto/update-book.dto';
 
 @Injectable()
 export class BookService {
@@ -33,19 +35,24 @@ export class BookService {
     });
   }
 
-  async createBook(bookData: { title: string; year_published: number; author_id: number; price: number }): Promise<Book> {
-    const author = await this.authorRepository.findOne({ where: { id: bookData.author_id.toString() } });
+  async createBook(createBookDto: CreateBookDto): Promise<Book> {
+    console.log('Received createBookDto:', createBookDto);
+
+    const { title, year_published, price, author_id } = createBookDto;
+    const author = await this.authorRepository.findOne({ where: { id: author_id } });
+
     if (!author) {
       throw new Error('Auteur non trouvé');
     }
 
     const newBook = this.bookRepository.create({
-      title: bookData.title,
-      year_published: bookData.year_published,
-      price: bookData.price,
-      author: author,
+      title,
+      year_published,
+      price,
+      author,
     });
 
+    console.log('Saving new book:', newBook);
     return this.bookRepository.save(newBook);
   }
 
@@ -56,16 +63,22 @@ export class BookService {
     });
   }
 
-  async updateBook(id: string, bookData: { title: string; year_published: number; price: number }): Promise<Book> {
+  async updateBook(id: string, updateBookDto: UpdateBookDto): Promise<Book> {
     const book = await this.bookRepository.findOne({ where: { id } });
     if (!book) {
       throw new NotFoundException(`Livre avec l'ID ${id} non trouvé`);
     }
 
-    // Mettre à jour les informations du livre
-    book.title = bookData.title;
-    book.year_published = bookData.year_published;
-    book.price = bookData.price;
+    // Mettre à jour les champs uniquement s'ils sont fournis dans updateBookDto
+    if (updateBookDto.title) {
+      book.title = updateBookDto.title;
+    }
+    if (updateBookDto.year_published) {
+      book.year_published = updateBookDto.year_published;
+    }
+    if (updateBookDto.price) {
+      book.price = updateBookDto.price;
+    }
 
     return this.bookRepository.save(book);
   }
