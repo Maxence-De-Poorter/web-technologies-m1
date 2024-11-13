@@ -27,6 +27,10 @@ interface BookDetailsPageProps {
 export default function BookDetailsPage({ params }: BookDetailsPageProps) {
     const [book, setBook] = useState<Book | null>(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editedTitle, setEditedTitle] = useState("");
+    const [editedYearPublished, setEditedYearPublished] = useState<number | "">("");
+    const [editedPrice, setEditedPrice] = useState<number | "">("");
     const router = useRouter();
 
     useEffect(() => {
@@ -44,18 +48,18 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
             }
             const data = await response.json();
             setBook(data);
+            setEditedTitle(data.title);
+            setEditedYearPublished(data.year_published);
+            setEditedPrice(data.price);
         } catch (error) {
             console.error("Erreur:", error);
         }
     };
 
-    const openDeleteModal = () => {
-        setIsDeleteModalOpen(true);
-    };
-
-    const closeDeleteModal = () => {
-        setIsDeleteModalOpen(false);
-    };
+    const openDeleteModal = () => setIsDeleteModalOpen(true);
+    const closeDeleteModal = () => setIsDeleteModalOpen(false);
+    const openEditModal = () => setIsEditModalOpen(true);
+    const closeEditModal = () => setIsEditModalOpen(false);
 
     const handleDeleteBook = async () => {
         if (book) {
@@ -68,6 +72,30 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                     return;
                 }
                 router.push("/books");
+            } catch (error) {
+                console.error("Erreur:", error);
+            }
+        }
+    };
+
+    const handleEditBook = async () => {
+        if (book) {
+            try {
+                const response = await fetch(`http://localhost:3001/books/${book.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        title: editedTitle,
+                        year_published: editedYearPublished,
+                        price: editedPrice
+                    }),
+                });
+                if (!response.ok) {
+                    console.error("Erreur lors de la modification du livre");
+                    return;
+                }
+                closeEditModal();
+                fetchBookDetails(book.id.toString());
             } catch (error) {
                 console.error("Erreur:", error);
             }
@@ -88,6 +116,12 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
             <div className="flex h-screen w-full">
                 <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[500px] rounded-lg">
                     <h1 className="text-center font-semibold text-xl">Options</h1>
+                    <button
+                        onClick={openEditModal}
+                        className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-4"
+                    >
+                        Modifier ce livre
+                    </button>
                     <button
                         onClick={openDeleteModal}
                         className="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600 mt-4"
@@ -110,6 +144,7 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                 </main>
             </div>
 
+            {/* Modal de confirmation de suppression */}
             {isDeleteModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
@@ -127,6 +162,51 @@ export default function BookDetailsPage({ params }: BookDetailsPageProps) {
                                 className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
                             >
                                 Confirmer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de modification */}
+            {isEditModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                        <h2 className="text-xl font-semibold mb-4">Modifier le livre</h2>
+                        <input
+                            type="text"
+                            placeholder="Titre"
+                            value={editedTitle}
+                            onChange={(e) => setEditedTitle(e.target.value)}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="number"
+                            placeholder="Date de publication"
+                            value={editedYearPublished}
+                            onChange={(e) => setEditedYearPublished(Number(e.target.value))}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded"
+                        />
+                        <input
+                            type="number"
+                            step="0.01"
+                            placeholder="Prix"
+                            value={editedPrice}
+                            onChange={(e) => setEditedPrice(Number(e.target.value))}
+                            className="w-full p-2 mb-4 border border-gray-300 rounded"
+                        />
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={closeEditModal}
+                                className="p-2 mr-2 bg-gray-300 rounded hover:bg-gray-400"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                onClick={handleEditBook}
+                                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                                Enregistrer
                             </button>
                         </div>
                     </div>
