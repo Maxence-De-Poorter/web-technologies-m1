@@ -56,6 +56,20 @@ export class BookService {
     });
   }
 
+  async updateBook(id: string, bookData: { title: string; year_published: number; price: number }): Promise<Book> {
+    const book = await this.bookRepository.findOne({ where: { id } });
+    if (!book) {
+      throw new NotFoundException(`Livre avec l'ID ${id} non trouvé`);
+    }
+
+    // Mettre à jour les informations du livre
+    book.title = bookData.title;
+    book.year_published = bookData.year_published;
+    book.price = bookData.price;
+
+    return this.bookRepository.save(book);
+  }
+
   async deleteBook(id: string): Promise<void> {
     const result = await this.bookRepository.delete(id);
     if (result.affected === 0) {
