@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Breadcrumb from "../../components/Breadcrumb";
 import PageTitle from "../../components/PageTitle";
 
+// Define types for Author and Book
 type Author = {
     id: number;
     first_name: string;
@@ -28,6 +29,7 @@ export default function BooksPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newBook, setNewBook] = useState({ title: "", year_published: "", price: "", author_id: "" });
 
+    // Fetches books based on search criteria
     const fetchBooks = async (title = "", authorId = "", order = "DESC") => {
         try {
             const query = new URLSearchParams();
@@ -37,31 +39,33 @@ export default function BooksPage() {
 
             const response = await fetch(`http://localhost:3001/books?${query.toString()}`);
             if (!response.ok) {
-                console.error("Erreur lors de la récupération des livres");
+                console.error("Error fetching books");
             }
             const data = await response.json();
             setBooks(data);
         } catch (error) {
-            console.error("Erreur:", error);
+            console.error("Error:", error);
         }
     };
 
+    // Fetches authors for the selection dropdown
     const fetchAuthors = async () => {
         try {
             const response = await fetch("http://localhost:3001/authors");
             if (!response.ok) {
-                console.error("Erreur lors de la récupération des auteurs");
+                console.error("Error fetching authors");
             }
             const data = await response.json();
             setAuthors(data);
         } catch (error) {
-            console.error("Erreur:", error);
+            console.error("Error:", error);
         }
     };
 
+    // Handles creating a new book entry
     const handleCreateBook = async () => {
         try {
-            // Convertir les valeurs en types corrects
+            // Convert string values to correct types
             const bookData = {
                 title: newBook.title,
                 year_published: parseInt(newBook.year_published, 10),
@@ -76,14 +80,14 @@ export default function BooksPage() {
             });
 
             if (!response.ok) {
-                console.error("Erreur lors de la création du livre");
+                console.error("Error creating book");
             } else {
                 setIsModalOpen(false);
                 setNewBook({ title: "", year_published: "", price: "", author_id: "" });
-                await fetchBooks(); // Rafraîchit la liste des livres
+                await fetchBooks(); // Refresh book list
             }
         } catch (error) {
-            console.error("Erreur:", error);
+            console.error("Error:", error);
         }
     };
 
@@ -92,33 +96,34 @@ export default function BooksPage() {
         fetchAuthors();
     }, []);
 
+    // Apply filters to book list
     const handleApplyFilters = () => {
         fetchBooks(searchTitle, selectedAuthor, sortOrder);
     };
 
     return (
         <div>
-            <PageTitle>Liste des livres</PageTitle>
+            <PageTitle>Book List</PageTitle>
             <Breadcrumb links={[
-                { href: "/", label: "Accueil" },
-                { href: "/books", label: "Liste des livres" },
+                { href: "/", label: "Home" },
+                { href: "/books", label: "Book List" },
             ]} />
 
-            {/* Modale de création de livre */}
+            {/* Modal for creating a new book */}
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                        <h2 className="text-xl font-semibold mb-4">Créer un nouveau livre</h2>
+                        <h2 className="text-xl font-semibold mb-4">Create a New Book</h2>
                         <input
                             type="text"
-                            placeholder="Titre"
+                            placeholder="Title"
                             value={newBook.title}
                             onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
                         <input
                             type="number"
-                            placeholder="Date de publication"
+                            placeholder="Publication Year"
                             value={newBook.year_published}
                             onChange={(e) => setNewBook({ ...newBook, year_published: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
@@ -126,7 +131,7 @@ export default function BooksPage() {
                         <input
                             type="number"
                             step="0.01"
-                            placeholder="Prix"
+                            placeholder="Price"
                             value={newBook.price}
                             onChange={(e) => setNewBook({ ...newBook, price: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
@@ -136,7 +141,7 @@ export default function BooksPage() {
                             onChange={(e) => setNewBook({ ...newBook, author_id: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         >
-                            <option value="">Sélectionner un auteur</option>
+                            <option value="">Select an Author</option>
                             {authors.map((author) => (
                                 <option key={author.id} value={author.id}>
                                     {author.last_name} {author.first_name}
@@ -148,27 +153,27 @@ export default function BooksPage() {
                                 onClick={() => setIsModalOpen(false)}
                                 className="p-2 mr-2 bg-gray-300 rounded hover:bg-gray-400"
                             >
-                                Annuler
+                                Cancel
                             </button>
                             <button
                                 onClick={handleCreateBook}
                                 className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                             >
-                                Créer
+                                Create
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Liste des livres */}
+            {/* Book List */}
             <div className="flex h-screen w-full">
                 <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[500px] rounded-lg">
-                    <h1 className="text-center font-semibold text-xl">Filtres</h1>
+                    <h1 className="text-center font-semibold text-xl">Filters</h1>
 
                     <input
                         type="text"
-                        placeholder="Rechercher par titre"
+                        placeholder="Search by Title"
                         value={searchTitle}
                         onChange={(e) => setSearchTitle(e.target.value)}
                         className="w-full p-2 my-4 border border-gray-300 rounded"
@@ -179,7 +184,7 @@ export default function BooksPage() {
                         onChange={(e) => setSelectedAuthor(e.target.value)}
                         className="w-full p-2 my-4 border border-gray-300 rounded bg-white text-gray-700 shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="">Tous les auteurs</option>
+                        <option value="">All Authors</option>
                         {authors.map((author) => (
                             <option key={author.id} value={author.id}>
                                 {author.last_name} {author.first_name}
@@ -192,23 +197,23 @@ export default function BooksPage() {
                         onChange={(e) => setSortOrder(e.target.value)}
                         className="w-full p-2 my-4 border border-gray-300 rounded bg-white text-gray-700 shadow focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="DESC">Du plus récent au plus ancien</option>
-                        <option value="ASC">Du plus ancien au plus récent</option>
+                        <option value="DESC">Newest to Oldest</option>
+                        <option value="ASC">Oldest to Newest</option>
                     </select>
 
                     <button
                         onClick={handleApplyFilters}
                         className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-4"
                     >
-                        Appliquer les filtres
+                        Apply Filters
                     </button>
 
-                    {/* Bouton pour ajouter un nouveau livre */}
+                    {/* Button to open modal to add new book */}
                     <button
                         onClick={() => setIsModalOpen(true)}
                         className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600"
                     >
-                        Ajouter un nouveau livre
+                        Add New Book
                     </button>
                 </aside>
 
@@ -218,9 +223,9 @@ export default function BooksPage() {
                             <Link key={book.id} href={`/books/${book.id}`}>
                                 <div className="border p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-100">
                                     <h2 className="text-lg font-semibold">{book.title}</h2>
-                                    <p>Auteur : {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Auteur inconnu"}</p>
-                                    <p>Date de publication : {book.year_published}</p>
-                                    <p>Prix : {book.price}$</p>
+                                    <p>Author: {book.author ? `${book.author.first_name} ${book.author.last_name}` : "Unknown Author"}</p>
+                                    <p>Publication Year: {book.year_published}</p>
+                                    <p>Price: {book.price}$</p>
                                 </div>
                             </Link>
                         ))}
