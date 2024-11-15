@@ -195,9 +195,8 @@ export default function AuthorsPage() {
                                 <div className="border p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-100">
                                     <img src={author.photo} alt={`${author.first_name} ${author.last_name}`}
                                          className="w-full h-32 object-contain rounded-full mb-4"/>
-                                    <h2 className="text-lg font-semibold">{author.first_name} {author.last_name}</h2>
+                                    <h2 className="text-lg font-semibold">{author.last_name} {author.first_name}</h2>
                                     <p>Number of Books: {author.bookCount}</p>
-                                    <p>Biography: {author.biography}</p>
                                 </div>
                             </Link>
                         ))}
