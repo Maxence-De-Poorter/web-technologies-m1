@@ -281,7 +281,6 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
                                     value={editFormData.photo}
                                     onChange={handleEditChange}
                                     className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                                    required
                                 />
                             </div>
                             <div className="mb-4">
