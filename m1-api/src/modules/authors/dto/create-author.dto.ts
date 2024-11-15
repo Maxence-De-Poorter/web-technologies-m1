@@ -10,7 +10,6 @@ export class CreateAuthorDto {
   last_name: string;
 
   @IsOptional()
-  @IsUrl()
   photo?: string;
 
   @IsOptional()
