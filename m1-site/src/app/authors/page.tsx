@@ -100,6 +100,7 @@ export default function AuthorsPage() {
                             value={newAuthor.first_name}
                             onChange={(e) => setNewAuthor({...newAuthor, first_name: e.target.value})}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
+                            required
                         />
                         <input
                             type="text"
@@ -107,17 +108,18 @@ export default function AuthorsPage() {
                             value={newAuthor.last_name}
                             onChange={(e) => setNewAuthor({...newAuthor, last_name: e.target.value})}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
+                            required
                         />
                         <input
                             type="text"
-                            placeholder="Photo URL"
+                            placeholder="Photo URL (optional)"
                             value={newAuthor.photo}
                             onChange={(e) => setNewAuthor({...newAuthor, photo: e.target.value})}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
                         />
                         <input
                             type="text"
-                            placeholder="Biography"
+                            placeholder="Biography (optional)"
                             value={newAuthor.biography}
                             onChange={(e) => setNewAuthor({...newAuthor, biography: e.target.value})}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"

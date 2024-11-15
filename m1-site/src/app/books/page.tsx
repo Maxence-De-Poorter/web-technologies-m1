@@ -130,6 +130,7 @@ export default function BooksPage() {
                             value={newBook.title}
                             onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
+                            required
                         />
                         <input
                             type="number"
@@ -137,21 +138,24 @@ export default function BooksPage() {
                             value={newBook.year_published}
                             onChange={(e) => setNewBook({ ...newBook, year_published: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
+                            required
                         />
                         <input
                             type="number"
                             step="0.01"
-                            placeholder="Price"
+                            placeholder="Price "
                             value={newBook.price}
                             onChange={(e) => setNewBook({ ...newBook, price: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
+                            required
                         />
                         <select
                             value={newBook.author_id}
                             onChange={(e) => setNewBook({ ...newBook, author_id: e.target.value })}
                             className="w-full p-2 mb-4 border border-gray-300 rounded"
+                            required
                         >
-                            <option value="">Select an Author</option>
+                            <option value="">Select an Author (required)</option>
                             {authors.map((author) => (
                                 <option key={author.id} value={author.id}>
                                     {author.last_name} {author.first_name}
