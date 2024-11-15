@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // Import Link from Next.js
 import Breadcrumb from "../../../components/Breadcrumb";
 import PageTitle from "../../../components/PageTitle";
 
@@ -186,7 +187,7 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
             <Breadcrumb links={[{ href: "/", label: "Home" }, { href: "/authors", label: "Author List" }, { href: `/authors/${author.id}`, label: `${author.first_name} ${author.last_name}` }]} />
 
             <div className="flex h-screen w-full">
-                <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[500px] rounded-lg">
+                <aside className="w-1/4 p-4 bg-gray-100 shadow-md mt-4 max-h-[185px] rounded-lg">
                     <h1 className="text-center font-semibold text-xl">Options</h1>
                     <button onClick={openEditModal} className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-4">Edit this author</button>
                     <button onClick={openDeleteModal} className="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600 mt-4">Delete this author</button>
@@ -203,7 +204,10 @@ export default function AuthorDetailsPage({ params }: AuthorDetailsPageProps) {
                             <ul className="list-disc pl-5 mt-2">
                                 {books.map(book => (
                                     <li key={book.id} className="mb-2">
-                                        <span className="font-medium">{book.title}</span> - {book.year_published} - {book.price}$
+                                        <Link href={`/books/${book.id}`} className="font-medium text-blue-500 hover:underline">
+                                            {book.title}
+                                        </Link>
+                                        {" "} - {book.year_published} - {book.price}$
                                         <button onClick={() => openDeleteBookModal(book)} className="ml-4 text-red-500 hover:underline">Delete</button>
                                     </li>
                                 ))}
