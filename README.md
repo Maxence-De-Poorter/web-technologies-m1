@@ -3,9 +3,8 @@
 # Contributors
 - DE POORTER Maxence
 - DANEL Théo
-- VANGHELUWE Théo
+- PRUVOT Quentin
 - STORDEUR Théo
-- DELEPLANQUE Audren
 
 
 
